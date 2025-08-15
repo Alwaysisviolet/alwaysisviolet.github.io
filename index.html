@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Alwaysisviolet</title>
+    <!-- Link đến file CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Link đến thư viện icon Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <!-- Màn hình chờ -->
+    <div id="landing-screen">
+        <h1 class="enter-text">tìm tôi hỏ</h1>
+    </div>
+
+    <!-- Container cho hiệu ứng mưa -->
+    <div id="rain-container"></div>
+
+    <!-- Video nền -->
+    <video autoplay loop muted id="background-video">
+        <source src="nendong.mp4" type="video/mp4">
+    </video>
+
+    <!-- Thẻ audio để xử lý nhạc -->
+    <audio id="audio" src="song.mp3"></audio>
+
+    <!-- Container chính (bị ẩn lúc đầu) -->
+    <div class="main-container">
+        <!-- Thẻ thông tin cá nhân (Profile Card) -->
+        <div class="profile-card">
+            <span id="copy-tooltip">Đã sao chép!</span>
+            <img src="avatar.png" alt="Avatar" class="avatar">
+            <p class="username">alwaysisviolet</p>
+            <div class="social-links">
+                <a onclick="copyToClipboard('alwaysisviolet')"><img src="discord.png" alt="Discord"></a>
+                <a href="https://www.facebook.com/always.sviolet" target="_blank"><img src="facebook.png" alt="Facebook"></a>
+                <a onclick="copyToClipboard('ledaithanhnd2ctp@gmail.com')"><img src="mail.png" alt="Email"></a>
+            </div>
+        </div>
+
+        <!-- Trình phát nhạc (Music Player) -->
+        <div class="music-player">
+            <img src="track-art.png" id="track-art" alt="Track Art">
+            <div class="track-info">
+                <div id="track-title">Ngày mưa đông</div>
+                <div id="track-artist">Chillies</div>
+                <div class="progress-container" id="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="time-stamps">
+                    <span id="current-time">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="prev-btn" class="control-btn"><i class="fas fa-backward"></i></button>
+                <button id="play-btn" class="control-btn play-pause"><i class="fas fa-play"></i></button>
+                <button id="next-btn" class="control-btn"><i class="fas fa-forward"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // --- SCRIPT CHO TOOLTIP SAO CHÉP ---
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                const tooltip = document.getElementById('copy-tooltip');
+                tooltip.classList.add('visible');
+                setTimeout(function() {
+                    tooltip.classList.remove('visible');
+                }, 2000);
+            }, function(err) {
+                console.error('Lỗi sao chép: ', err);
+                alert("Rất tiếc, sao chép đã thất bại!");
+            });
+        }
+
+        // --- SCRIPT CHO TRANG WEB ---
+        const landingScreen = document.getElementById('landing-screen');
+        const mainContainer = document.querySelector('.main-container');
+        const musicPlayer = document.querySelector('.music-player');
+        const playBtn = document.getElementById('play-btn');
+        const audio = document.getElementById('audio');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+
+        function playSong() {
+            musicPlayer.classList.add('playing');
+            playBtn.querySelector('i.fas').classList.remove('fa-play');
+            playBtn.querySelector('i.fas').classList.add('fa-pause');
+            audio.play();
+        }
+
+        function pauseSong() {
+            musicPlayer.classList.remove('playing');
+            playBtn.querySelector('i.fas').classList.add('fa-play');
+            playBtn.querySelector('i.fas').classList.remove('fa-pause');
+            audio.pause();
+        }
+
+        function updateProgress(e) {
+            const { duration, currentTime } = e.srcElement;
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            if (duration) {
+                let durationMinutes = Math.floor(duration / 60);
+                let durationSeconds = Math.floor(duration % 60);
+                if (durationSeconds < 10) durationSeconds = `0${durationSeconds}`;
+                durationEl.textContent = `${durationMinutes}:${durationSeconds}`;
+            }
+            let currentMinutes = Math.floor(currentTime / 60);
+            let currentSeconds = Math.floor(currentTime % 60);
+            if (currentSeconds < 10) currentSeconds = `0${currentSeconds}`;
+            currentTimeEl.textContent = `${currentMinutes}:${currentSeconds}`;
+        }
+        
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        }
+        
+        function enterWebsite() {
+            landingScreen.style.opacity = '0';
+            setTimeout(() => {
+                landingScreen.style.display = 'none';
+            }, 500);
+
+            mainContainer.style.display = 'flex';
+            setTimeout(() => {
+                mainContainer.style.opacity = '1';
+            }, 10);
+
+            playSong();
+        }
+
+        landingScreen.addEventListener('click', enterWebsite);
+
+        playBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isPlaying = musicPlayer.classList.contains('playing');
+            isPlaying ? pauseSong() : playSong();
+        });
+
+        audio.addEventListener('timeupdate', updateProgress);
+        audio.addEventListener('loadedmetadata', updateProgress);
+        progressContainer.addEventListener('click', setProgress);
+        audio.addEventListener('ended', pauseSong);
+
+        // --- SCRIPT MỚI CHO HIỆU ỨNG MƯA ---
+        const rainContainer = document.getElementById('rain-container');
+        const numberOfDrops = 50; 
+
+        function createRipple(x, y) {
+            const ripple = document.createElement('div');
+            ripple.classList.add('ripple');
+            rainContainer.appendChild(ripple);
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+            });
+        }
+        
+        function createRaindrop() {
+            const drop = document.createElement('div');
+            drop.classList.add('raindrop');
+            rainContainer.appendChild(drop);
+
+            const startX = Math.random() * window.innerWidth;
+            const duration = Math.random() * 2 + 1;
+            const delay = Math.random() * 5;
+
+            drop.style.left = `${startX}px`;
+            drop.style.animationDuration = `${duration}s`;
+            drop.style.animationDelay = `${delay}s`;
+
+            drop.addEventListener('animationend', () => {
+                const rect = drop.getBoundingClientRect();
+                createRipple(rect.left, window.innerHeight - 5);
+                drop.remove(); 
+                createRaindrop();
+            });
+        }
+
+        for (let i = 0; i < numberOfDrops; i++) {
+            createRaindrop();
+        }
+    </script>
+</body>
+</html>
