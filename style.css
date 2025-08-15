@@ -6,6 +6,7 @@ body {
     padding: 0;
     font-family: Arial, sans-serif;
     overflow: hidden; /* Ẩn thanh cuộn của trang */
+    background-color: #111; /* Đặt nền tối để chống "lóe sáng" khi tải */
 }
 
 /* Màn hình chờ */
@@ -20,7 +21,7 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.2); /* Nền trong suốt để thấy hiệu ứng blur */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     transition: opacity 0.5s ease-out;
