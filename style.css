@@ -10,9 +10,7 @@ body {
     cursor: url('cursor.cur'), auto;
 }
 
-a, button {
-    cursor: pointer;
-}
+/* XÓA BỎ QUY TẮC CŨ Ở ĐÂY */
 
 /* Màn hình chờ */
 #landing-screen {
@@ -67,6 +65,7 @@ a, button {
     border: 2px solid white;
     padding: 15px 30px;
     transition: all 0.2s ease;
+    cursor: url('cursor.cur'), auto; /* Đảm bảo con trỏ không đổi */
 }
 
 .choice-btn:hover {
@@ -115,6 +114,7 @@ a, button {
     background-color: white;
     border: none;
     padding: 10px 25px;
+    cursor: url('cursor.cur'), auto; /* Đảm bảo con trỏ không đổi */
 }
 
 .hidden {
@@ -178,6 +178,7 @@ a, button {
 
 .social-links a {
     margin: 0 15px;
+    cursor: url('cursor.cur'), auto; /* Đảm bảo con trỏ không đổi */
 }
 
 .social-links img {
@@ -256,6 +257,7 @@ a, button {
     margin: 10px 0;
     height: 5px;
     width: 100%;
+    cursor: url('cursor.cur'), auto; /* Đảm bảo con trỏ không đổi */
 }
 
 .progress-bar {
@@ -284,6 +286,7 @@ a, button {
     color: white;
     font-size: 18px;
     padding: 10px;
+    cursor: url('cursor.cur'), auto; /* Đảm bảo con trỏ không đổi */
 }
 
 .play-pause {
