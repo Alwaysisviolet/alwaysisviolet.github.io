@@ -8,6 +8,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CVZY87Z2RH"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-CVZY87Z2RH');
+    </script>
 </head>
 <body>
 
@@ -216,7 +225,7 @@
             setTimeout(() => loadingScreen.style.display = "none", 500);
         });
 
-        // Hiệu ứng sao băng đã được chỉnh sửa
+        // Hiệu ứng sao băng đã được chỉnh sửa để phân bố đều hơn
         const canvas = document.getElementById('meteor-canvas');
         const ctx = canvas.getContext('2d');
         let meteors = [];
@@ -322,4 +331,3 @@
     </script>
 </body>
 </html>
-
