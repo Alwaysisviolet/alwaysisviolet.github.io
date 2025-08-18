@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Alwaysisviolet</title>
-    <!-- Link đến file CSS -->
     <link rel="stylesheet" href="style.css">
-    <!-- Link đến thư viện icon Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <!-- THAY ĐỔI Ở ĐÂY: Link đến font chữ pixel mới (VT323) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- Màn hình chờ -->
+    <div id="loading-screen">
+        <div class="loader"></div>
+        <p class="loading-text">Đang tải...</p>
+    </div>
+
     <div id="landing-screen">
         <div class="landing-content">
-            <h1 class="enter-text">tìm tôi đúm khum???</h1>
+            <h1 class="enter-text">Chào bạn, mình cùng vào nhé?</h1>
             <div class="button-container">
                 <button id="yes-btn" class="choice-btn">Ừ</button>
                 <button id="no-btn" class="choice-btn">Không</button>
@@ -25,7 +26,6 @@
         </div>
     </div>
 
-    <!-- Hộp thoại cảnh báo tùy chỉnh -->
     <div id="custom-alert" class="hidden">
         <div class="alert-box">
             <p id="alert-message"></p>
@@ -33,17 +33,13 @@
         </div>
     </div>
 
-    <!-- Video nền -->
     <video autoplay loop muted id="background-video">
         <source src="nendong.mp4" type="video/mp4">
     </video>
 
-    <!-- Thẻ audio để xử lý nhạc -->
     <audio id="audio" src="song.mp3"></audio>
 
-    <!-- Container chính (bị ẩn lúc đầu) -->
     <div class="main-container">
-        <!-- Thẻ thông tin cá nhân (Profile Card) -->
         <div class="profile-card">
             <span id="copy-tooltip">Đã sao chép!</span>
             <img src="avatar.png" alt="Avatar" class="avatar">
@@ -52,17 +48,20 @@
                 <a onclick="copyToClipboard('alwaysisviolet')"><img src="Discord.png" alt="Discord"></a>
                 <a href="https://www.facebook.com/always.sviolet" target="_blank"><img src="Facebook.png" alt="Facebook"></a>
                 <a onclick="copyToClipboard('ledaithanhnd2ctp@gmail.com')"><img src="Mail.png" alt="Email"></a>
+                <a onclick="copyToClipboard('violet#1234')"><img src="Riot.png" alt="Riot ID"></a>
+                <a onclick="copyToClipboard('123456789')"><img src="LienQuan.png" alt="Liên Quân ID"></a>
             </div>
         </div>
 
-        <!-- Trình phát nhạc (Music Player) -->
         <div class="music-player">
             <img src="track-art.png" id="track-art" alt="Track Art">
             <div class="track-info">
                 <div id="track-title">Ngày mùa đông</div>
                 <div id="track-artist">Chillies</div>
                 <div class="progress-container" id="progress-container">
-                    <div class="progress-bar" id="progress-bar"></div>
+                    <div class="progress-bar" id="progress-bar">
+                        <div class="progress-thumb" id="progress-thumb"></div>
+                    </div>
                 </div>
                 <div class="time-stamps">
                     <span id="current-time">0:00</span>
@@ -77,23 +76,26 @@
         </div>
     </div>
 
-    <!-- JavaScript -->
+    <canvas id="meteor-canvas"></canvas>
+
     <script>
-        // --- SCRIPT CHO TOOLTIP SAO CHÉP ---
         function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(function() {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
                 const tooltip = document.getElementById('copy-tooltip');
+                tooltip.textContent = "Đã sao chép!";
                 tooltip.classList.add('visible');
-                setTimeout(function() {
-                    tooltip.classList.remove('visible');
-                }, 2000);
-            }, function(err) {
-                console.error('Lỗi sao chép: ', err);
-                alert("Rất tiếc, sao chép đã thất bại!");
-            });
+                setTimeout(() => tooltip.classList.remove('visible'), 2000);
+            } catch (err) {
+                showAlert("Sao chép thất bại!");
+            }
+            document.body.removeChild(textarea);
         }
 
-        // --- SCRIPT CHO TRANG WEB ---
         const landingScreen = document.getElementById('landing-screen');
         const mainContainer = document.querySelector('.main-container');
         const musicPlayer = document.querySelector('.music-player');
@@ -101,10 +103,10 @@
         const audio = document.getElementById('audio');
         const progressContainer = document.getElementById('progress-container');
         const progressBar = document.getElementById('progress-bar');
+        const progressThumb = document.getElementById('progress-thumb');
         const currentTimeEl = document.getElementById('current-time');
         const durationEl = document.getElementById('duration');
 
-        // --- SCRIPT CHO TƯƠNG TÁC MÀN HÌNH CHỜ ---
         const yesBtn = document.getElementById('yes-btn');
         const noBtn = document.getElementById('no-btn');
         const customAlert = document.getElementById('custom-alert');
@@ -124,14 +126,12 @@
         }
 
         yesBtn.addEventListener('click', enterWebsite);
-
         noBtn.addEventListener('click', () => {
             if (noClickCount < messages.length) {
                 showAlert(messages[noClickCount]);
                 noClickCount++;
             }
         });
-
         alertOkBtn.addEventListener('click', () => {
             customAlert.classList.add('hidden');
             if (noClickCount >= 3) {
@@ -141,56 +141,63 @@
 
         function enterWebsite() {
             landingScreen.style.opacity = '0';
-            setTimeout(() => {
-                landingScreen.style.display = 'none';
-            }, 500);
-
+            setTimeout(() => landingScreen.style.display = 'none', 500);
             mainContainer.style.display = 'flex';
-            setTimeout(() => {
-                mainContainer.style.opacity = '1';
-            }, 10);
-
+            setTimeout(() => mainContainer.style.opacity = '1', 10);
             playSong();
         }
 
-        // --- SCRIPT CHO TRÌNH PHÁT NHẠC ---
         function playSong() {
             musicPlayer.classList.add('playing');
-            playBtn.querySelector('i.fas').classList.remove('fa-play');
-            playBtn.querySelector('i.fas').classList.add('fa-pause');
+            playBtn.querySelector('i.fas').classList.replace('fa-play', 'fa-pause');
             audio.play();
         }
-
         function pauseSong() {
             musicPlayer.classList.remove('playing');
-            playBtn.querySelector('i.fas').classList.add('fa-play');
-            playBtn.querySelector('i.fas').classList.remove('fa-pause');
+            playBtn.querySelector('i.fas').classList.replace('fa-pause', 'fa-play');
             audio.pause();
         }
 
-        function updateProgress(e) {
-            const { duration, currentTime } = e.srcElement;
+        function updateProgress() {
+            const { duration, currentTime } = audio;
             const progressPercent = (currentTime / duration) * 100;
             progressBar.style.width = `${progressPercent}%`;
+            if (!isDragging) progressThumb.style.left = `${progressPercent}%`;
+
             if (duration) {
-                let durationMinutes = Math.floor(duration / 60);
-                let durationSeconds = Math.floor(duration % 60);
-                if (durationSeconds < 10) durationSeconds = `0${durationSeconds}`;
-                durationEl.textContent = `${durationMinutes}:${durationSeconds}`;
+                let m = Math.floor(duration / 60), s = Math.floor(duration % 60);
+                if (s < 10) s = `0${s}`;
+                durationEl.textContent = `${m}:${s}`;
             }
-            let currentMinutes = Math.floor(currentTime / 60);
-            let currentSeconds = Math.floor(currentTime % 60);
-            if (currentSeconds < 10) currentSeconds = `0${currentSeconds}`;
-            currentTimeEl.textContent = `${currentMinutes}:${currentSeconds}`;
+            let cm = Math.floor(currentTime / 60), cs = Math.floor(currentTime % 60);
+            if (cs < 10) cs = `0${cs}`;
+            currentTimeEl.textContent = `${cm}:${cs}`;
         }
-        
+
+        let isDragging = false;
         function setProgress(e) {
-            const width = this.clientWidth;
+            const width = progressContainer.clientWidth;
             const clickX = e.offsetX;
-            const duration = audio.duration;
-            audio.currentTime = (clickX / width) * duration;
+            audio.currentTime = (clickX / width) * audio.duration;
         }
-        
+
+        progressThumb.addEventListener('mousedown', () => isDragging = true);
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                const progressWidth = progressThumb.offsetLeft / progressContainer.clientWidth;
+                audio.currentTime = progressWidth * audio.duration;
+            }
+        });
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                let newLeft = e.clientX - progressContainer.getBoundingClientRect().left;
+                newLeft = Math.max(0, Math.min(newLeft, progressContainer.clientWidth));
+                const progressPercent = (newLeft / progressContainer.clientWidth) * 100;
+                progressThumb.style.left = `${progressPercent}%`;
+                progressBar.style.width = `${progressPercent}%`;
+            }
+        });
         playBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             const isPlaying = musicPlayer.classList.contains('playing');
@@ -201,8 +208,117 @@
         audio.addEventListener('loadedmetadata', updateProgress);
         progressContainer.addEventListener('click', setProgress);
         audio.addEventListener('ended', pauseSong);
+
+        // Ẩn loading khi web load xong
+        window.addEventListener("load", () => {
+            const loadingScreen = document.getElementById("loading-screen");
+            loadingScreen.style.opacity = "0";
+            setTimeout(() => loadingScreen.style.display = "none", 500);
+        });
+
+        // Hiệu ứng sao băng đã được chỉnh sửa
+        const canvas = document.getElementById('meteor-canvas');
+        const ctx = canvas.getContext('2d');
+        let meteors = [];
+        let stars = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            for (let i = 0; i < 200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    alpha: Math.random()
+                });
+            }
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function createMeteor() {
+            const angle = Math.PI * 0.75; // Góc bay cố định
+            const speed = 2 + Math.random() * 3;
+            // Chọn vị trí xuất phát ngẫu nhiên trên một đường chéo ảo
+            const startPosition = Math.random() * (canvas.width + canvas.height);
+            let startX, startY;
+            if (startPosition < canvas.width) {
+                startX = startPosition;
+                startY = 0;
+            } else {
+                startX = canvas.width;
+                startY = startPosition - canvas.width;
+            }
+            
+            meteors.push({
+                x: startX,
+                y: startY,
+                size: 1 + Math.random() * 2,
+                color: `rgba(255, 255, 255, ${0.5 + Math.random() * 0.5})`,
+                angle: angle,
+                speed: speed,
+            });
+        }
+
+        function updateMeteors() {
+            meteors = meteors.filter(meteor => meteor.x < canvas.width && meteor.y < canvas.height);
+            meteors.forEach(meteor => {
+                meteor.x += Math.cos(meteor.angle) * meteor.speed;
+                meteor.y += Math.sin(meteor.angle) * meteor.speed;
+            });
+        }
+
+        function drawMeteors() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw regular stars
+            stars.forEach(star => {
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw meteors
+            meteors.forEach(meteor => {
+                const tailLength = 200;
+                const tailStart = {
+                    x: meteor.x - Math.cos(meteor.angle) * tailLength,
+                    y: meteor.y - Math.sin(meteor.angle) * tailLength
+                };
+                const gradient = ctx.createLinearGradient(tailStart.x, tailStart.y, meteor.x, meteor.y);
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+                gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.5)');
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 1)');
+
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = meteor.size;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(tailStart.x, tailStart.y);
+                ctx.lineTo(meteor.x, meteor.y);
+                ctx.stroke();
+
+                // Draw the shiny pixel at the head
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(meteor.x, meteor.y, meteor.size * 1.5, 0, Math.PI * 2);
+                ctx.shadowColor = 'white';
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0; // Reset shadow
+            });
+        }
+
+        function animate() {
+            updateMeteors();
+            drawMeteors();
+            requestAnimationFrame(animate);
+        }
+
+        setInterval(createMeteor, 200);
+        animate();
     </script>
 </body>
 </html>
-
-
