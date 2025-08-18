@@ -252,3 +252,74 @@ body::after {
     cursor: url('cursor.cur'), auto; 
 }
 .play-pause { font-size: 24px; }
+
+/* ========================================= */
+/* Responsive Design cho điện thoại    */
+/* ========================================= */
+@media (max-width: 768px) {
+    /* Màn hình chờ */
+    .landing-content {
+        transform: scale(0.8);
+        padding: 0 20px;
+    }
+
+    .enter-text {
+        font-size: 2.5rem;
+    }
+
+    .button-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .choice-btn {
+        width: 80%;
+        margin: auto;
+    }
+
+    /* Nội dung chính */
+    .main-container {
+        padding: 20px;
+    }
+
+    .profile-card {
+        width: 100%;
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+    .username {
+        font-size: 20px;
+        margin: 10px 0 20px;
+    }
+
+    .social-links img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .music-player {
+        width: 100%;
+        padding: 15px;
+        flex-direction: column;
+        text-align: center;
+        border-radius: 15px;
+    }
+
+    #track-art {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .track-info {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .controls {
+        margin-left: 0;
+        margin-top: 15px;
+    }
+}
